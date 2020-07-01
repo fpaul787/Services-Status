@@ -66,6 +66,11 @@ html, body {
     position: relative;
 }
 
+#region_select_buttons {
+    margin: 1rem 0 0 0;
+    width: 100%
+}
+
 h1 {
     text-align: center;
     font-family: 'Fira Sans', sans-serif;
@@ -104,12 +109,11 @@ a:hover {
 }
 
 #list_of_services_data {
-    overflow: auto;
-    height: 33rem;
+    overflow: hidden;
 }
 
 #specific_service {
-    overflow: auto;
+    overflow: hidden;
     height: 17rem;
 }
 
@@ -246,6 +250,10 @@ h3 {
     margin: 5px;
 }
 
+#service_table {
+    font-size: 0.8rem;
+}
+
 /* Adjusting elements according to screen size. Responsive */
 
 @media (max-width: 576px) {
@@ -258,7 +266,7 @@ h3 {
     }
 
     h1 {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
 
     h3 {
@@ -269,11 +277,11 @@ h3 {
         height: 41rem;
     }
 
-    #search_and_filter {
-        margin: 10px 10px 10px 10px;
+
+
+    #service_table {
+        font-size: 0.8rem;
     }
-
-
 }
 
 
@@ -286,11 +294,11 @@ h3 {
     }
 
     h1 {
-        font-size: 1.6rem;
+            font-size: 1.5rem;
     }
 
     h3 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     #subscribe, #update {
@@ -303,7 +311,6 @@ h3 {
     text-align: right;
     margin: 5px;
     }
-
 }
 
 @media (min-width: 768px) {
@@ -317,11 +324,11 @@ h3 {
     }
 
     h1 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
     }
 
     h3 {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
 
     #subscribe, #update {
@@ -337,11 +344,11 @@ h3 {
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     h3 {
-        font-size: 1.4rem;
+        font-size: 1.1rem;
     }
 
     #subscribe, #update {
@@ -368,11 +375,11 @@ h3 {
     }
 
     h1 {
-        font-size: 2.1rem;
+        font-size: 1.6rem;
     }
 
     h3 {
-        font-size: 1.45rem;
+        font-size: 1.15rem;
     }
 
     #subscribe, #update {
@@ -407,6 +414,7 @@ h3 {
         text-align: right;
         margin: 5px;
     }
+
 }
 
 /* CSS Dark Mode Slider */
