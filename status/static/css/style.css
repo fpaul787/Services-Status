@@ -250,13 +250,11 @@ h3 {
     margin: 5px;
 }
 
-
-
 /* Adjusting elements according to screen size. Responsive */
 
 @media (max-width: 576px) {
 
-   /*Small*/
+    /*Small*/
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
@@ -264,11 +262,11 @@ h3 {
     }
 
     h1 {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 
     h3 {
-        font-size: 0.875rem;
+        font-size: 1rem;
     }
 
     #subscribe, #update {
@@ -278,27 +276,26 @@ h3 {
 
 }
 
-
 @media (min-width: 576px) {
 
     /*Small*/
+
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
         font-size: 0.75rem;
     }
 
     h1 {
-            font-size: 1rem;
+            font-size: 1.2rem;
     }
 
     h3 {
-        font-size: 0.875rem;
+        font-size: 15rem;
     }
 
     #subscribe, #update {
         height: 34rem;
     }
-
 
     #region_selector {
     width: 30%;
@@ -309,20 +306,19 @@ h3 {
 
 @media (min-width: 768px) {
 
-
-
     /*Medium*/
+
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
         font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
 
     h3 {
-        font-size: 1rem;
+        font-size: 1.2rem
     }
 
     #subscribe, #update {
@@ -331,18 +327,20 @@ h3 {
 }
 
 @media (min-width: 992px) {
+
     /*Large*/
+
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
         font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 1.2rem;
+        font-size: 2rem;
     }
 
     h3 {
-        font-size: 1rem;
+        font-size: 1.5rem;
     }
 
     #subscribe, #update {
@@ -361,6 +359,7 @@ h3 {
 }
 
 @media (min-width: 1200px) {
+
     /*Extra Large*/
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
@@ -369,11 +368,11 @@ h3 {
     }
 
     h1 {
-        font-size: 1.2rem;
+        font-size: 2rem;
     }
 
     h3 {
-        font-size: 1rem;
+        font-size: 1.5rem;
     }
 
     #subscribe, #update {
@@ -387,6 +386,7 @@ h3 {
 }
 
 @media (min-width: 1400px) {
+
     /*Extra Large*/
 
     #incidents_data {
@@ -414,7 +414,7 @@ h3 {
 
 .switch {
   position: relative;
-  margin-top: 0px;
+  margin-top: 0;
   margin-left: 5px;
   display: inline-block;
   width: 40px;
@@ -480,7 +480,7 @@ input:checked + .slider:before {
     display: inline-block;
     width: 30px;
     height: 17px;
-    margin-right: 0px;
+    margin-right: 0;
     vertical-align: text-top;
 }
     /* Hide default HTML checkbox */
@@ -489,6 +489,7 @@ input:checked + .slider:before {
         width: 0;
         height: 0;
     }
+
 /* The slider */
 .slider {
     position: absolute;
