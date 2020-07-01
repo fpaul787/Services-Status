@@ -64,7 +64,7 @@
                     </a>
                 </div>
                 <!-- Region Select Buttons -->
-                <div style="margin: 1rem 0 0 0; width: 100%">
+                <div id="region_select_buttons">
                     <form action="." method="get">
 
                         <!-- This loop prints each region from the database as a label, then creates a (custom)checkbox for each printed region.-->
@@ -129,7 +129,7 @@
             <div class="col-12 col-lg-10 mb-2 border">
                 <!-- Table headings -->
                 <div class="row border-top border-bottom bold pt-2 mb-2" id="list_of_services_heading">
-                    <div class="col-5">
+                    <div class="col-4">
                         <p>Business Services</p>
                     </div>
                     <div class="col pl-1">
@@ -172,7 +172,7 @@
                         {% for service in services_list %}
 
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-4">
                                     <a href="{{ service.id }}">
                                         <p>{{ service }}</p>
                                     </a>
