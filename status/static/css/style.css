@@ -250,9 +250,7 @@ h3 {
     margin: 5px;
 }
 
-#service_table {
-    font-size: 0.8rem;
-}
+
 
 /* Adjusting elements according to screen size. Responsive */
 
@@ -278,10 +276,6 @@ h3 {
     }
 
 
-
-    #service_table {
-        font-size: 0.8rem;
-    }
 }
 
 
