@@ -43,7 +43,7 @@ class ClientDomainAdmin(admin.ModelAdmin):
                     DropdownFilter),
                    ('services__topology__subservices__name',
                     DropdownFilter),
-                    ('services__scope',
+                   ('services__scope',
                     DropdownFilter))
     ordering = ['name']
 
@@ -61,7 +61,7 @@ class ServiceAdmin(admin.ModelAdmin):
                     DropdownFilter),
                    ('topology__subservices__name',
                     DropdownFilter),
-                    ('scope', 
+                   ('scope',
                     ChoiceDropdownFilter))
     ordering = ['name']
 
@@ -123,7 +123,7 @@ class TicketAdmin(admin.ModelAdmin):
     inlines = [TicketHistoryInline]
 
     # ticket id will be auto generated when landing on Add Ticket
-    readonly_fields = ['ticket_id']
+    # readonly_fields = ['ticket_id']
 
     search_fields = ['sub_service__name', 'status__tag']  # removed ticket_id 6/29
 
@@ -142,6 +142,16 @@ class TicketAdmin(admin.ModelAdmin):
     actions = [notify_users]
 
     form = TicketForm
+
+    def get_changeform_initial_data(self, request):
+
+        latest_tickets_id_plus1 = 'T000000001'
+        if Ticket.objects.values().count() > 0:
+            latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
+
+        return {
+            'ticket_id': latest_tickets_id_plus1
+        }
 
     def save_formset(self, request, form, formset, change):
         # If it is received data related to the ticket's events, the ticket
