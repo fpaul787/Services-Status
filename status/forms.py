@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from validate_email import validate_email
 
 from status.mail_sender import MailSender
+from .models import ClientDomain
 from .models import EmailDomain
 from .models import Region
 from .models import Service
@@ -12,7 +13,6 @@ from .models import SubService
 from .models import Subscriber
 from .models import Ticket
 from .models import Topology
-from .models import ClientDomain
 
 
 class ClientDomainForm(forms.ModelForm):
@@ -255,12 +255,17 @@ class TicketForm(forms.ModelForm):
 
     cleaned_data = None
 
+    # ticket_id = forms.CharField(widget=forms.HiddenInput(), initial='T67')
+
     class Meta:
         model = Ticket
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
+
         super(TicketForm, self).__init__(*args, **kwargs)
+
+        self.fields['ticket_id'].disabled = True
 
         if self.instance.id:
             self.fields['notify_action'] = forms.ChoiceField(choices=self.YES_NO_CHOICES)
@@ -318,6 +323,11 @@ class TicketForm(forms.ModelForm):
                     self.instance.user_notified = True
                 except Exception as e:
                     print(e)  # we should log this as an error
+
+    # def clean_ticket_id(self):
+    #     if not self['ticket_id'].html_name in self.data:
+    #         return self.fields['ticket_id'].initial
+    #     return self.cleaned_data['ticket_id']
 
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):

@@ -22,14 +22,19 @@ class Service(models.Model):
     """
     MULTI_DOMAIN = "multi_domain"
     INTER_DOMAIN = "inter_domain"
-    DOMAIN_CHOICES = [
+    DOMAIN_CHOICES = (
         (MULTI_DOMAIN, "Multi-Domain"),
         (INTER_DOMAIN, "Inter-Domain")  
-    ]
+    )
+
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
     service_description = RichTextField(blank=True, null=True, verbose_name='Description')
     scope = models.CharField(max_length=30, choices=DOMAIN_CHOICES, default=MULTI_DOMAIN, blank=False)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> master
     def description(self):
         """
         Method to truncate and render HTML content.
@@ -37,7 +42,7 @@ class Service(models.Model):
             description during the object listing process.
             - The HTML render process will help to visualize
             HTML rendered content on the listed object's stories.
-        :return: No return
+        :return: a truncated value formatted to HTML
         """
         if self.service_description is not None:
             return format_html(Truncator(self.service_description).chars(250))
@@ -238,6 +243,16 @@ class Status(models.Model):
         return self.tag
 
 
+# def get_new_ticket_id():
+#     # this method returns the 'id' of the last ticket object added to the DB and increments it by 1
+#     # if 8 ticket objects are in the database it will return T000000009
+#     # latest_tickets_id_plus1 = 'T' + str(Ticket.objects.latest('id').id + 1).zfill(8)
+#     latest_tickets_id_plus1 = 'T000000001'
+#     if Ticket.objects.values().count() > 0:
+#         latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
+#     return latest_tickets_id_plus1
+
+
 class Ticket(models.Model):
     """
     Class to specify the Ticket Model/Table
@@ -259,6 +274,7 @@ class Ticket(models.Model):
         (YES, 'Yes')
     )
 
+    # ticket_id = models.CharField(unique=True, max_length=10, default=get_new_ticket_id)
     ticket_id = models.CharField(unique=True, max_length=10)
 
     # This action (models.SET_NULL) will allow keeping tickets regardless of
