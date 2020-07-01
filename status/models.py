@@ -30,11 +30,6 @@ class Service(models.Model):
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
     service_description = RichTextField(blank=True, null=True, verbose_name='Description')
     scope = models.CharField(max_length=30, choices=DOMAIN_CHOICES, default=MULTI_DOMAIN, blank=False)
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> master
     def description(self):
         """
         Method to truncate and render HTML content.
