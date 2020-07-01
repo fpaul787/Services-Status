@@ -197,7 +197,7 @@ a:hover {
 }
 
 #subscribe, #update {
-    height: 36rem;
+    height: 37rem;
 }
 
 #subscribe {
@@ -224,16 +224,16 @@ a:hover {
 /* Default size for xs screen sizes */
 .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
 #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
 }
 
 h1 {
-        font-size: 1.5rem;
+        font-size: 1rem;
 }
 
 
 h3 {
-    font-size: 1rem;
+    font-size: 0.875rem;
 }
 
 #modify_subscription {
@@ -260,19 +260,19 @@ h3 {
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
-        font-size: 0.9rem;
+        font-size: 0.75rem;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
 
     h3 {
-        font-size: 1.1rem;
+        font-size: 0.875rem;
     }
 
     #subscribe, #update {
-        height: 41rem;
+        height: 37rem;
     }
 
 
@@ -284,19 +284,19 @@ h3 {
     /*Small*/
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
-        font-size: 0.9rem;
+        font-size: 0.75rem;
     }
 
     h1 {
-            font-size: 1.5rem;
+            font-size: 1rem;
     }
 
     h3 {
-        font-size: 1.1rem;
+        font-size: 0.875rem;
     }
 
     #subscribe, #update {
-        height: 36rem;
+        height: 34rem;
     }
 
 
@@ -314,19 +314,19 @@ h3 {
     /*Medium*/
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
-        font-size: 1rem;
+        font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
 
     h3 {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     #subscribe, #update {
-        height: 37rem;
+        height: 35rem;
     }
 }
 
@@ -334,19 +334,19 @@ h3 {
     /*Large*/
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
-        font-size: 1.05rem;
+        font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
 
     h3 {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     #subscribe, #update {
-        height: 41rem;
+        height: 35rem;
     }
 
     #subscription_page {
@@ -365,19 +365,19 @@ h3 {
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
-        font-size: 1.10rem;
+        font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 1.6rem;
+        font-size: 1.2rem;
     }
 
     h3 {
-        font-size: 1.15rem;
+        font-size: 1rem;
     }
 
     #subscribe, #update {
-        height: 38rem;
+        height: 35rem;
     }
 
     #region_selector {
@@ -404,7 +404,6 @@ h3 {
     }
 
     #region_selector {
-
         text-align: right;
         margin: 5px;
     }
@@ -415,7 +414,7 @@ h3 {
 
 .switch {
   position: relative;
-  margin-top: 2px;
+  margin-top: 0px;
   margin-left: 5px;
   display: inline-block;
   width: 40px;
