@@ -242,8 +242,10 @@ class Status(models.Model):
 def get_new_ticket_id():
     # this method returns the 'id' of the last ticket object added to the DB and increments it by 1
     # if 8 ticket objects are in the database it will return T000000009
-    latest_tickets_id_plus1 = 'T' + str(Ticket.objects.latest('id').id + 1).zfill(8)
-
+    # latest_tickets_id_plus1 = 'T' + str(Ticket.objects.latest('id').id + 1).zfill(8)
+    latest_tickets_id_plus1 = 'T000000001'
+    if Ticket.objects.values().count() > 0:
+        latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
     return latest_tickets_id_plus1
 
 
