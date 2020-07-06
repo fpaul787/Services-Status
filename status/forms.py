@@ -265,10 +265,17 @@ class TicketForm(forms.ModelForm):
 
         super(TicketForm, self).__init__(*args, **kwargs)
 
-        self.fields['ticket_id'].disabled = True
+        # self.fields['ticket_id'].required = False
+        # self.fields['ticket_id'].disabled = True
 
         if self.instance.id:
             self.fields['notify_action'] = forms.ChoiceField(choices=self.YES_NO_CHOICES)
+
+    # def clean_ticket_id(self):
+    #     if self.instance and self.instance.pk:
+    #         return self.instance.ticket_id
+    #     else:
+    #         return self.cleaned_data['ticket_id']
 
     def clean(self):
         self.cleaned_data = super().clean()

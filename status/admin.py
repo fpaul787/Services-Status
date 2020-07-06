@@ -123,7 +123,7 @@ class TicketAdmin(admin.ModelAdmin):
     inlines = [TicketHistoryInline]
 
     # ticket id will be auto generated when landing on Add Ticket
-    # readonly_fields = ['ticket_id']
+    readonly_fields = ['ticket_id']
 
     search_fields = ['sub_service__name', 'status__tag']  # removed ticket_id 6/29
 
@@ -143,21 +143,23 @@ class TicketAdmin(admin.ModelAdmin):
 
     form = TicketForm
 
-    def get_changeform_initial_data(self, request):
-
-        latest_tickets_id_plus1 = 'T000000001'
-        if Ticket.objects.values().count() > 0:
-            latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
-
-        return {
-            'ticket_id': latest_tickets_id_plus1
-        }
+    # def get_changeform_initial_data(self, request):
+    #
+    #     latest_tickets_id_plus1 = 'T000000001'
+    #     if Ticket.objects.values().count() > 0:
+    #         latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
+    #
+    #     return {
+    #         'ticket_id': latest_tickets_id_plus1
+    #     }
 
     def save_formset(self, request, form, formset, change):
+
         # If it is received data related to the ticket's events, the ticket
         # will update its status with the last status registered on the events
         if formset.cleaned_data:
             status = formset.cleaned_data[-1]['status']
+
             # If the last Ticket Log status is 'No Issues,' means that the problem has
             # updating the Ticket End Time to the value specified on the last Ticket Events
             if status.tag == 'No Issues':
