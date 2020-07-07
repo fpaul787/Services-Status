@@ -170,7 +170,6 @@ class EmailActions:
         topology = Topology.objects.filter(subservices__in=subservices)
 
         _changed_data = changed_data
-        # print(self.cleaned_data)
 
         users_mail1 = list()
         users_mail2 = list()
@@ -255,8 +254,6 @@ class TicketForm(forms.ModelForm):
 
     cleaned_data = None
 
-    # ticket_id = forms.CharField(widget=forms.HiddenInput(), initial='T67')
-
     class Meta:
         model = Ticket
         fields = '__all__'
@@ -265,17 +262,8 @@ class TicketForm(forms.ModelForm):
 
         super(TicketForm, self).__init__(*args, **kwargs)
 
-        # self.fields['ticket_id'].required = False
-        # self.fields['ticket_id'].disabled = True
-
         if self.instance.id:
             self.fields['notify_action'] = forms.ChoiceField(choices=self.YES_NO_CHOICES)
-
-    # def clean_ticket_id(self):
-    #     if self.instance and self.instance.pk:
-    #         return self.instance.ticket_id
-    #     else:
-    #         return self.cleaned_data['ticket_id']
 
     def clean(self):
         self.cleaned_data = super().clean()
@@ -330,11 +318,6 @@ class TicketForm(forms.ModelForm):
                     self.instance.user_notified = True
                 except Exception as e:
                     print(e)  # we should log this as an error
-
-    # def clean_ticket_id(self):
-    #     if not self['ticket_id'].html_name in self.data:
-    #         return self.fields['ticket_id'].initial
-    #     return self.cleaned_data['ticket_id']
 
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):

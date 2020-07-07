@@ -143,16 +143,6 @@ class TicketAdmin(admin.ModelAdmin):
 
     form = TicketForm
 
-    # def get_changeform_initial_data(self, request):
-    #
-    #     latest_tickets_id_plus1 = 'T000000001'
-    #     if Ticket.objects.values().count() > 0:
-    #         latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
-    #
-    #     return {
-    #         'ticket_id': latest_tickets_id_plus1
-    #     }
-
     def save_formset(self, request, form, formset, change):
 
         # If it is received data related to the ticket's events, the ticket
