@@ -114,6 +114,15 @@
                         {#Describe this conditional statement functionality#}
                     {% else %}
 
+                        <!-- Region Filtering Buttons -->
+                        <h5><b>Filter Services By Region</b></h5>
+                        <form action="." method="get">
+                            {% for region in regions %}
+                                <button class="button-service-filter" type="submit" name="filter_region"
+                                        value="{{ region }}">{{ region }}</button>
+                            {% endfor %}
+                        </form>
+
                         <form action="." method="POST"> {% csrf_token %}
                             <div class="form-group form-inline"> <!-- Name info -->
                                 <label class="mr-2 bold">Enter your name</label>
