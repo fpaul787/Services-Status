@@ -39,7 +39,11 @@ let cssToggle = () => {
             }
     } else if (currentUrl.includes("/subscription/")) {
         var subscriptions = document.getElementById("subscribe");
+        var updateBox = document.getElementById("update");
+        update.classList.toggle("darkmode");
+        update.classList.toggle("whitefont");
         subscriptions.classList.toggle("eventDarkMode");
+
     } else if (currentUrl.includes("/details/")){
         var tickets = document.getElementById("ticket_info");
         tickets.classList.toggle("eventDarkMode");

@@ -11,8 +11,8 @@ html, body {
     filter:contrast(10);
 }
 
-.blackbg {
-    color: white;
+.whitefont {
+    color: #ddd;
 }
 
 
@@ -31,6 +31,7 @@ html, body {
     color: #ddd !important;
 }
 
+
 .eventDarkMode span {
     color: #ddd !important;
 }
@@ -39,6 +40,7 @@ html, body {
     background-color: #CCCCCC !important;
     color: #000;
 }
+
 
 
 
