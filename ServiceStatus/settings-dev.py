@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'XXXSECRETKEYXXX'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -87,10 +87,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'servicestatus',
-        'USER': 'root',
-        'PASSWORD': 'pass',
-        'HOST': 'localhost',
+        'NAME': 'XXXDBNAMEXXX',
+        'USER': 'XXXDBUSERXXX',
+        'PASSWORD': 'XXXDBPASSXXX',
+        'HOST': 'XXXDBHOSTXXX',
         'PORT': '3306',
     }
 }
