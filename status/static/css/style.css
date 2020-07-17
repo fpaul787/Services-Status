@@ -11,9 +11,10 @@ html, body {
     filter:contrast(10);
 }
 
-.blackbg {
-    color: white;
+.whitefont {
+    color: #ddd;
 }
+
 
 .navbar {
     font-family: 'Fira Sans', sans-serif;
@@ -26,9 +27,22 @@ html, body {
 
 .eventDarkMode {
     filter:invert(100);
-    background-color: #333333;
-    color: white;
+    background-color: #333333 !important;
+    color: #ddd !important;
 }
+
+
+.eventDarkMode span {
+    color: #ddd !important;
+}
+
+.tableHeaderDM {
+    background-color: #CCCCCC !important;
+    color: #000;
+}
+
+
+
 
 .link {
     color: #0373fc;
@@ -108,6 +122,10 @@ a:hover {
 
 #list_of_services_data {
     overflow: hidden;
+}
+
+#list_of_services_heading {
+    background-color: #E9ECEF;
 }
 
 #specific_service {
