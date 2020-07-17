@@ -22,20 +22,20 @@ class ClientDomainForm(forms.ModelForm):
         # check to see if user has chosen a service
         if 'services' in self.cleaned_data:
             services = self.cleaned_data['services']
-        
+
             tmp_inter_services = []  # list to hold inter-domain services chosen by user
 
             for service in services:
                 if service.scope == Service.INTER_DOMAIN:
                     # tmp_inter_services.append(service.name)
-                    
+
                     """
                     if user chose more than 1 inter-domain service
                     currently the feature is not needed, but will be
                     left here commented out if that feature is needed
                     in the future
                     """
-                    # if len(tmp_inter_services) > 1:  
+                    # if len(tmp_inter_services) > 1:
                     #     self.add_error("services", "Only 1 inter-domain service can be chosen. \
                     #             Please choose between " + " and ".join(tmp_inter_services))
                     #     raise ValidationError("There are some errors in services")
@@ -254,6 +254,15 @@ class TicketForm(forms.ModelForm):
 
     cleaned_data = None
 
+    client_domain = forms.ModelChoiceField(
+        queryset=ClientDomain.objects.all(),
+        required=False
+    )
+
+    services = forms.ModelMultipleChoiceField(
+        queryset=Service.objects.all(),
+        required=False)
+
     class Meta:
         model = Ticket
         fields = '__all__'
@@ -318,6 +327,44 @@ class TicketForm(forms.ModelForm):
                     self.instance.user_notified = True
                 except Exception as e:
                     print(e)  # we should log this as an error
+
+            if self.cleaned_data['client_domain']:
+                # all services under the domain are affected
+                # all sub-services under each service is also
+                # affected
+
+                # client domain chosen by user
+                client_domain = self.cleaned_data['client_domain']
+
+                # |= allows us to create a union of querysets
+                # This allows for us to add on to the services
+                # if the user already chooses a service or
+                # services.
+                self.cleaned_data['services'] |= client_domain.services.all()
+
+            if self.cleaned_data['services']:
+                # associated_sub_services
+
+                services = self.cleaned_data['services']
+                querysets = []
+                for service in services:
+
+                    # get sub service under service from Topology
+                    if Topology.objects.filter(service=service).values('subservices').exists():
+                        topology_queryset = Topology.objects.filter(
+                            service=service)
+                        for topology in topology_queryset:
+                            querysets.append(topology.subservices.all())
+
+                result_queryset = SubService.objects.none()
+                for query in querysets:
+                    result_queryset = result_queryset | query
+
+                # |= allows us to create a union of querysets
+                # This allows for us to add on to the subservices
+                # if the user already chooses a sub-service or
+                # sub-services.
+                self.cleaned_data['sub_service'] |= result_queryset
 
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):
@@ -439,37 +486,6 @@ class SubscriberDataForm(forms.ModelForm):
         widget=forms.EmailInput(
             attrs={"placeholder": "Email", "class": "form-control"}),
         required=True)
-
-    def get_service_names(self):
-        """
-        Method to retrieve an array of service names
-        """
-
-        service_names = []
-        for service in self.fields['services'].queryset:
-            service_names.append(service.name)
-
-        return service_names
-
-    def filter_services(self, servs):
-        """
-        Method to filter the regions being retrieved and stored in the services variable
-        """
-        # If servs is empty, filter will return no selections
-        if not servs:
-            # Replace this with an error that will show up on the template.
-            print("No matches for this Services filter")
-            self.fields['services'].queryset = Service.objects.none()
-
-        # Set filtered services to initial value of servs, then
-        else:
-            filtered_services = Service.objects.filter(name__icontains=servs[0])
-            qs1 = Service.objects.none()
-
-            # Iterate through all values passed to servs and add them to the form's queryset.
-            for serv in servs:
-                qs1 = Service.objects.filter(name__icontains=serv)
-                self.fields['services'].queryset = qs1 | filtered_services
 
     def check_mail_domain(self):
         """

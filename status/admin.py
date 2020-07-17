@@ -111,10 +111,15 @@ class TicketHistoryInline(admin.StackedInline):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ('ticket_id', 'sub_service', 'status', 'begin', 'end', 'notify_action',)
+    list_display = ('ticket_id', 'get_subservices', 'status', 'begin', 'end', 'notify_action',)
+
+    def get_subservices(self, obj):
+        return "\n".join([sub_service.name for sub_service in obj.sub_service.all()])
+
+    get_subservices.short_description = 'Sub-Services'    
 
     fieldsets = [
-        ('Sub-Service on process', {'fields': ['ticket_id', 'sub_service', 'status']}),
+        ('Sub-Service on process', {'fields': ['ticket_id', 'client_domain', 'services', 'sub_service', 'status']}),
         ('Date information', {'fields': ['begin', 'end']}),
         ('Additional Information', {'fields': ['action_description', 'action_notes']}),
         (None, {'fields': ['notify_action']}),
