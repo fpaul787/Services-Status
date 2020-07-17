@@ -13,7 +13,7 @@
 
                 <!--  Ticket main information section  -->
                 <p><span class="bold">Sub-service affected:</span> {{ object.sub_service }}</p>
-                <div class="container mb-1 border-bottom py-2 mb-4"
+                <div class="container mb-1 py-2 mb-4"
                      style="border-left: 0.4rem solid {{ object.status.color_hex }};"
                      id="ticket_info">
                     <div class="row px-3 pt-3 d-flex justify-content-between">
@@ -23,7 +23,7 @@
                             {{ instance.ticket_id }}</p>
                         <p class="bold" data-toggle="tooltip" data-placement="top"
                            title="{{ object.status.tag }}">
-                            <span style="color: {{ object.status.color_hex }}">
+                            <span style="color: {{ object.status.color_hex }} !important">
                                 <i class="{{ object.status.class_design }}"></i>
                             </span>
                         </p>

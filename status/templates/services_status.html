@@ -22,7 +22,7 @@
                 <a href="details/{{ ticket.id }}">
                     <p><span class="bold">Sub-service Impacted: </span>{{ ticket.sub_service.name }}</p>
                     <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
-                    <p>{{ ticket.action_description | safe }}</p> <!--  Description of the ticket  -->
+                    <p id="ticket_description">{{ ticket.action_description | safe }}</p> <!--  Description of the ticket  -->
                 </a>
             </div>
 
@@ -207,7 +207,7 @@
             <div class="col-2 d-none d-lg-inline">
                 <!--  Legend section  -->
                 <div class="container ml-2 border-left border-right border-bottom">
-                    <div class="row py-1 border legend_heading">
+                    <div class="row py-1 border legend_heading" id="legend_header">
                         <p class="bold my-1 pl-2">Legend</p>
                     </div>
 
