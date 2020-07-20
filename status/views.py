@@ -632,7 +632,7 @@ class ServiceHistoryDetailsView(ListView):
             context['ticket_events'] = ticket_events
 
             # Getting list of tickets associated with the service
-            service_tickets = Ticket.objects.filter(sub_service__in=obj.sub_service.all())
+            service_tickets = Ticket.objects.filter(sub_service__in=obj.sub_service.all()).order_by('pk')
             context['service_tickets'] = list(service_tickets)
 
             # Getting number of tickets
