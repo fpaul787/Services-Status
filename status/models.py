@@ -24,7 +24,7 @@ class Service(models.Model):
     INTER_DOMAIN = "inter_domain"
     DOMAIN_CHOICES = (
         (MULTI_DOMAIN, "Multi-Domain"),
-        (INTER_DOMAIN, "Inter-Domain")  
+        (INTER_DOMAIN, "Inter-Domain")
     )
 
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
@@ -53,7 +53,7 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def scope_type(self):
         return str(self.scope).upper()
 
@@ -85,6 +85,7 @@ class ClientDomain(models.Model):
         if self.domain_description is not None:
             return format_html(self.domain_description)
         return self.domain_description
+
     description.allow_tags = True
 
     class Meta:
@@ -271,10 +272,14 @@ class Ticket(models.Model):
 
     ticket_id = models.CharField(unique=True, max_length=10, default=get_new_ticket_id)
 
+    # sub-service to sub-services
+    sub_service = models.ManyToManyField(SubService, blank=True, verbose_name='Sub - Services')
+
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.
-    sub_service = models.ForeignKey(SubService, models.SET_NULL,
-                                    null=True, verbose_name='Sub-Service')
+    # sub_service = models.ForeignKey(SubService, models.SET_NULL,
+    #                                 null=True, verbose_name='Sub-Service')
+
     status = models.ForeignKey(Status, models.DO_NOTHING,
                                null=True, default=3, verbose_name='Status')
     begin = models.DateTimeField()
@@ -312,7 +317,12 @@ class TicketLog(models.Model):
     action_notes = RichTextField(blank=True, null=True, verbose_name='Notes')
 
     def __str__(self):
-        return "{0} in {1}".format(self.ticket.sub_service, self.ticket.ticket_id)
+        queryset_list = []
+        for sub_service in self.ticket.sub_service.all():
+            queryset_list.append(sub_service.name)
+        
+        # adjust ticket log for subservices
+        return "{0} in Ticket: {1}".format("---".join(queryset_list), self.ticket.ticket_id)
 
 
 class Subscriber(models.Model):
