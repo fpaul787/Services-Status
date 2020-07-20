@@ -292,6 +292,15 @@ class Ticket(models.Model):
         choices=YES_NO_CHOICES,
         verbose_name='Ticket notified')
 
+    def subservices_list(self):
+        """
+        Method to create an HTML enriched list
+        :return:
+        """
+        return format_html("<br>".join([sub_service.name for sub_service in self.sub_service.all()]))
+
+    subservices_list.allow_tags = True
+
     class Meta:
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
