@@ -312,6 +312,7 @@ class Ticket(models.Model):
         localized_current_time = datetime.now(pytz.utc)
         return localized_current_time > self.begin
 
+
     def __str__(self):
         # return "{0} in {1}".format(self.service_category, self.business_service)
         return self.ticket_id

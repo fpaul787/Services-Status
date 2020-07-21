@@ -22,27 +22,24 @@
             <div class="container mt-4 py-3 ticket-instance list_events"
                  style="border-left: 0.6rem solid {{ ticket.status.color_hex }};">
                 <a href="details/{{ ticket.id }}">
-                    <p><span class="bold">Sub-services Impacted: </span>
+                    <p>
+                        <span class="bold">Sub-services Impacted: </span>
                         <ul>
                             {% for sub_service in ticket.sub_service.all %}
-
-                            <li style="float: left;" class="mx-3"><p style="margin: 0;">{{sub_service.name}}</p></li>
-                    {% endfor %}
+                                <li style="float: left;" class="mx-3"><p style="margin: 0;">{{sub_service.name}}</p></li>
+                            {% endfor %}
                         </ul>
-                    <div class="clearfix"></div>
+                        <div class="clearfix"></div>
+                    </p>
+                    <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
 
-                    </p>
-                    <p><span class="bold">Status: </span>
-                        {% if ticket.status.tag == "Planned" and ticket.is_in_process %}
-                            On Process
-                        {% else %}
-                            {{ ticket.status.tag }}
-                        {% endif %}
-                    </p>
-                    {% if ticket.status.tag == "Planned" %}
-                    <p><span class="bold">Action Date: </span>{{ ticket.begin }}</p>
+                    {% if ticket.status.tag == "Planned" or ticket.status.tag == "In Process"%}
+                        <p><span class="bold">Action Date: </span>{{ ticket.begin }}</p>
                     {% endif %}
-                    <p id="ticket_description">{{ ticket.action_description | safe }}</p> <!--  Description of the ticket  -->
+
+                    <p><span class="bold">Current Status Information: </span>{{ ticket.latest_log }}</p>
+                    <p id="ticket_description">{{ ticket.action_description | safe }}</p>
+                    <!--  Description of the ticket  -->
                 </a>
 
             </div>
