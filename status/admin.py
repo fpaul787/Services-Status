@@ -120,7 +120,7 @@ class TicketAdmin(admin.ModelAdmin):
     # get_subservices.short_description = 'Sub-Services'
 
     fieldsets = [
-        ('Sub-Service on process', {'fields': ['ticket_id', 'client_domain', 'services', 'sub_service', 'status']}),
+        ('Sub-Service on process', {'fields': ['ticket_id', 'client_domains', 'services', 'sub_service', 'status']}),
         ('Date information', {'fields': ['begin', 'end']}),
         ('Additional Information', {'fields': ['action_description', 'action_notes']}),
         (None, {'fields': ['notify_action']}),

@@ -254,14 +254,6 @@ class TicketForm(forms.ModelForm):
 
     cleaned_data = None
 
-    client_domain = forms.ModelChoiceField(
-        queryset=ClientDomain.objects.all(),
-        required=False
-    )
-
-    services = forms.ModelMultipleChoiceField(
-        queryset=Service.objects.all(),
-        required=False)
 
     class Meta:
         model = Ticket
@@ -328,19 +320,17 @@ class TicketForm(forms.ModelForm):
                 except Exception as e:
                     print(e)  # we should log this as an error
 
-            if self.cleaned_data['client_domain']:
+            if self.cleaned_data['client_domains']:
                 # all services under the domain are affected
                 # all sub-services under each service is also
-                # affected
-
-                # client domain chosen by user
-                client_domain = self.cleaned_data['client_domain']
-
-                # |= allows us to create a union of querysets
-                # This allows for us to add on to the services
-                # if the user already chooses a service or
-                # services.
-                self.cleaned_data['services'] |= client_domain.services.all()
+                # affected 
+                
+                for client_domain in self.cleaned_data['client_domains']:
+                    # |= allows us to create a union of querysets
+                    # This allows for us to add on to the services
+                    # if the user already chooses a service or
+                    # services.
+                    self.cleaned_data['services'] |= client_domain.services.all()
 
             if self.cleaned_data['services']:
                 # associated_sub_services
