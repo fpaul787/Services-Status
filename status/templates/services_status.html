@@ -32,7 +32,16 @@
                     <div class="clearfix"></div>
 
                     </p>
-                    <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
+                    <p><span class="bold">Status: </span>
+                        {% if ticket.status.tag == "Planned" and ticket.is_in_process %}
+                            On Process
+                        {% else %}
+                            {{ ticket.status.tag }}
+                        {% endif %}
+                    </p>
+                    {% if ticket.status.tag == "Planned" %}
+                    <p><span class="bold">Action Date: </span>{{ ticket.begin }}</p>
+                    {% endif %}
                     <p id="ticket_description">{{ ticket.action_description | safe }}</p> <!--  Description of the ticket  -->
                 </a>
 
