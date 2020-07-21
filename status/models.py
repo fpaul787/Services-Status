@@ -3,14 +3,15 @@
 This module will define all the models and their
 relationships to build up the Application logic.
 """
+from datetime import datetime
+
+import pytz
 from ckeditor.fields import RichTextField
 from colorfield.fields import ColorField
 from django.db import models
 from django.utils.html import format_html
 from django.utils.text import Truncator
 from django.utils.translation import ugettext_lazy as _
-from datetime import datetime
-import pytz
 
 
 class Service(models.Model):
@@ -311,7 +312,6 @@ class Ticket(models.Model):
     def is_in_process(self):
         localized_current_time = datetime.now(pytz.utc)
         return localized_current_time > self.begin
-
 
     def __str__(self):
         # return "{0} in {1}".format(self.service_category, self.business_service)
