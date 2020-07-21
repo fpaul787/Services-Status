@@ -121,7 +121,6 @@ class ServicesStatusView(View):
                 else:
                     ticket.latest_log = ticket.status
 
-
         context = {
             "ticket_list": new_queryset,
             "service_active": True
