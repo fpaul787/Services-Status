@@ -356,6 +356,9 @@ class TicketForm(forms.ModelForm):
                 # sub-services.
                 self.cleaned_data['sub_service'] |= result_queryset
 
+            if not (self.cleaned_data['sub_service'].exists()):
+                raise ValidationError("Please select one or more Client Domains, Services and/or Sub - Services")
+
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):
 
