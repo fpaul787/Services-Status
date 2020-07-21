@@ -276,6 +276,8 @@ class Ticket(models.Model):
 
     # sub-service to sub-services
     sub_service = models.ManyToManyField(SubService, blank=True, verbose_name='Sub - Services')
+    services = models.ManyToManyField(Service, blank=True, verbose_name='Service')
+    client_domains = models.ManyToManyField(ClientDomain, blank=True, verbose_name='Client Domains')
 
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.
