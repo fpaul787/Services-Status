@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load tz %}
 
 {% block content %}
 
@@ -26,7 +27,7 @@
                             <ul>
                                 {% for sub_service in ticket.sub_service.all %}
                                     <li style="float: left" class="mx-3">
-                                        <p style="margin: 0;">{{sub_service.name}}</p>
+                                        <p style="margin: 0;">{{ sub_service.name }}</p>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -34,11 +35,22 @@
                         </p>
                         <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
 
-                        {% if ticket.status.tag == "Planned" or ticket.status.tag == "In Process"%}
+                        {% if ticket.status.tag == "Planned" %}
                             <p><span class="bold">Action Date: </span>{{ ticket.begin }}</p>
+
+                            {% if ticket.end|localtime|timesince >= "1 min" %}
+                                <p><span class="bold">Current Status Information: </span>Completed</p>
+                            {% else %}
+                                <p><span class="bold">Current Status Information: </span>In Process</p>
+                            {% endif %}
+
+                        {% elif ticket.ticket.is_in_process %}
+                            <p><span class="bold">Current Status Information: </span>In Process</p>
+
+                        {% else %}
+                            <p><span class="bold">Current Status Information: </span>{{ ticket.latest_log }}</p>
                         {% endif %}
 
-                        <p><span class="bold">Current Status Information: </span>{{ ticket.latest_log }}</p>
                         <p id="ticket_description">{{ ticket.action_description | safe }}</p>
                         <!--  Description of the ticket  -->
                     </a>
