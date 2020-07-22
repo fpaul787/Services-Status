@@ -8,47 +8,47 @@
         <h1>Services Status</h1>
     </div>
 
-    <!--  Recent events section  -->
-    <section id="recent_events"> <!--  This section will show all events in the last five days  -->
-        <div class="container" id="events_heading">
-            <h3 class="bold">Recent Events</h3>
-        </div>
-
-        {#Describe this "for" statement functionality#}
-        {% for ticket in ticket_list %}
-
-
-
-            <div class="container mt-4 py-3 ticket-instance list_events"
-                 style="border-left: 0.6rem solid {{ ticket.status.color_hex }};">
-                <a href="details/{{ ticket.id }}">
-                    <p>
-                        <span class="bold">Sub-services Impacted: </span>
-                        <ul>
-                            {% for sub_service in ticket.sub_service.all %}
-                                <li style="float: left;" class="mx-3"><p style="margin: 0;">{{sub_service.name}}</p></li>
-                            {% endfor %}
-                        </ul>
-                        <div class="clearfix"></div>
-                    </p>
-                    <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
-
-                    {% if ticket.status.tag == "Planned" or ticket.status.tag == "In Process"%}
-                        <p><span class="bold">Action Date: </span>{{ ticket.begin }}</p>
-                    {% endif %}
-
-                    <p><span class="bold">Current Status Information: </span>{{ ticket.latest_log }}</p>
-                    <p id="ticket_description">{{ ticket.action_description | safe }}</p>
-                    <!--  Description of the ticket  -->
-                </a>
-
+    {% if ticket_list|length != 0 %}
+        <!--  Recent events section  -->
+        <section id="recent_events"> <!--  This section will show all events in the last five days  -->
+            <div class="container" id="events_heading" style="padding-left: 0px;">
+                <h3 class="bold">Recent Events</h3>
             </div>
 
-        {% endfor %}
+            {#Describe this "for" statement functionality#}
+            {% for ticket in ticket_list %}
 
-    </section>
+                <div class="container mt-4 py-3 ticket-instance list_events"
+                     style="border-left: 0.6rem solid {{ ticket.status.color_hex }};">
+                    <a href="details/{{ ticket.id }}">
+                        <p>
+                            <span class="bold">Sub-services Impacted: </span>
+                            <ul>
+                                {% for sub_service in ticket.sub_service.all %}
+                                    <li style="float: left" class="mx-3">
+                                        <p style="margin: 0;">{{sub_service.name}}</p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="clearfix"></div>
+                        </p>
+                        <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
 
-    <!--  End of Recent events section  -->
+                        {% if ticket.status.tag == "Planned" or ticket.status.tag == "In Process"%}
+                            <p><span class="bold">Action Date: </span>{{ ticket.begin }}</p>
+                        {% endif %}
+
+                        <p><span class="bold">Current Status Information: </span>{{ ticket.latest_log }}</p>
+                        <p id="ticket_description">{{ ticket.action_description | safe }}</p>
+                        <!--  Description of the ticket  -->
+                    </a>
+                </div>
+
+            {% endfor %}
+
+        </section>
+        <!--  End of Recent events section  -->
+    {% endif %}
 
     <!--  Services List section  -->
 
@@ -62,8 +62,8 @@
                             <div class="form-group m-0">
                                 <input type="text" name="search" placeholder="Search..." class="form-control"
 
-                                        {#Describe this conditional statement functionality#}
-                                        {% if search_value %} value="{{ search_value }}" {% endif %}>
+                                {#Describe this conditional statement functionality#}
+                                {% if search_value %} value="{{ search_value }}" {% endif %}>
 
                                 <input type="text" name="region_list" hidden value="{{ region_list }}">
                             </div>
@@ -75,39 +75,38 @@
                         </div>
                     </div>
                 </form>
-            	                </div>
-                <div class="col-6 d-flex align-items-center">
-                    <a href="/" class="link">
-                        <p class="m-0">Reset filters</p>
-                    </a>
-                </div>
-                <!-- Region Select Buttons -->
-                <div id="region_select_buttons">
-                    <form action="." method="get">
+            </div>
+            <div class="col-6 d-flex align-items-center">
+                <a href="/" class="link">
+                    <p class="m-0">Reset filters</p>
+                </a>
+            </div>
+            <!-- Region Select Buttons -->
+            <div id="region_select_buttons">
+                <form action="." method="get">
 
-                        <!-- This loop prints each region from the database as a label, then creates a (custom)checkbox for each printed region.-->
-                        {#Describe this "for" statement functionality#}
-                        {% for region in region_list %}
-                        <span style="display: inline-block" id="region_selector">
-                            <label>{{ region }}</label>
-                            <label class="switch">
-                                <input type="checkbox" name="regions" value="{{ region }}"
-                                {% if region.name in regions_checked %}checked{% endif %}>
-                                <span class="slider round"></span>
-                            </label>
-                        </span>
-                        <!-- Potential cosmetic issues with text wrapping if the regions list grows larger. -->
-                        {% endfor %}
-                        <br/>
-                        <div  class="d-flex justify-content-center">
-                            <button type="submit" name="regions_select" class="btn btn btn-secondary mt-1 mb-2 d-flex justify-content-center" id="submit_region">
+                    <!-- This loop prints each region from the database as a label, then creates a (custom)checkbox for each printed region.-->
+                    {#Describe this "for" statement functionality#}
+                    {% for region in region_list %}
+                    <span style="display: inline-block" id="region_selector">
+                        <label>{{ region }}</label>
+                        <label class="switch">
+                            <input type="checkbox" name="regions" value="{{ region }}"
+                            {% if region.name in regions_checked %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                    </span>
+                    <!-- Potential cosmetic issues with text wrapping if the regions list grows larger. -->
+                    {% endfor %}
+                    <br/>
+                    <div  class="d-flex justify-content-center">
+                        <button type="submit" name="regions_select" class="btn btn btn-secondary mt-1 mb-2 d-flex justify-content-center" id="submit_region">
                             Select Regions
                         </button>
-                        </div>
-
-                    </form>
-                </div>
-                <!-- End Region Select Buttons -->
+                    </div>
+                </form>
+            </div>
+            <!-- End Region Select Buttons -->
         </div>
     </div>
     <!--  End of Search and filter section  -->
@@ -128,8 +127,8 @@
                         <div class="row m-0 d-flex justify-content-between p-0 dropdown-item">
                             <div class="col-1 d-inline">{{ status.tag }}</div>
                             <div class="col-1 mr-2 d-inline">
-                               <span style="color: {{ status.color_hex }}">
-                               <i class="{{ status.class_design }}"></i>
+                                <span style="color: {{ status.color_hex }}">
+                                    <i class="{{ status.class_design }}"></i>
                                 </span>
                             </div>
                         </div>
@@ -246,10 +245,11 @@
                         </div>
 
                     {% endfor %}
-
                     <!--  End of Legend items  -->
+
                 </div>
                 <!--  End ofLegend section  -->
+
             </div>
         </div>
     </div>

@@ -47,11 +47,23 @@ class ServicesStatusView(View):
 
         global services
 
+        today = timezone.now().date()
         self.remove_sessions(request)
 
         # Getting most recent 5 tickets
         # queryset = Ticket.objects.all().order_by('begin').reverse()[:5]
-        queryset = Ticket.objects.all().order_by('pk').reverse()[:5]
+        # queryset = Ticket.objects.all().order_by('pk').reverse()[:5]
+
+        # It will retrieve all the tickets lower than today - 4
+        # (Last 5 days including today) based on the begin day information
+        queryset_down = Ticket.objects.filter(Q(begin__gte=(today - timedelta(4)))).order_by('pk').reverse()
+
+        # It will retrieve all the tickets grader than today
+        # based on the end day information
+        queryset_up = Ticket.objects.filter(Q(end__gte=today)).order_by('pk').reverse()
+
+        # It will join query results precomputed before
+        queryset = queryset_down.union(queryset_up)
 
         # Initializing queryset to empty
         recent_tickets = Ticket.objects.none()
@@ -209,6 +221,7 @@ class ServicesStatusView(View):
             i = 0
             for day in list_of_five_days:
                 open_tickets = tickets_list.filter(Q(begin__lte=(day + timedelta(days=1))) & Q(end__isnull=True))
+
                 current_tickets = tickets_list.filter(begin__startswith=day)
 
                 active_tickets_per_day = open_tickets.union(current_tickets).order_by('begin')
