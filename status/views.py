@@ -84,27 +84,27 @@ class ServicesStatusView(View):
             queryset_high_high = Ticket.objects.none()
             if len(recent_high_high_priority_tickets):
                 custom_list = [ticket.id for ticket in recent_high_high_priority_tickets]
-                queryset_high_high = Ticket.objects.filter(pk__in=custom_list)
+                queryset_high_high = Ticket.objects.filter(pk__in=custom_list).reverse()
 
             queryset_high_low = Ticket.objects.none()
             if len(recent_high_low_priority_tickets):
                 custom_list = [ticket.id for ticket in recent_high_low_priority_tickets]
-                queryset_high_low = Ticket.objects.filter(pk__in=custom_list)
+                queryset_high_low = Ticket.objects.filter(pk__in=custom_list).reverse()
 
             queryset_medium_high = Ticket.objects.none()
             if len(recent_medium_high_priority_tickets):
                 custom_list = [ticket.id for ticket in recent_medium_high_priority_tickets]
-                queryset_medium_high = Ticket.objects.filter(pk__in=custom_list)
+                queryset_medium_high = Ticket.objects.filter(pk__in=custom_list).reverse()
 
             queryset_medium_low = Ticket.objects.none()
             if len(recent_medium_low_priority_tickets):
                 custom_list = [ticket.id for ticket in recent_medium_low_priority_tickets]
-                queryset_medium_low = Ticket.objects.filter(pk__in=custom_list)
+                queryset_medium_low = Ticket.objects.filter(pk__in=custom_list).reverse()
 
             queryset_low = Ticket.objects.none()
             if len(recent_low_priority_ticket):
                 custom_list = [ticket.id for ticket in recent_low_priority_ticket]
-                queryset_low = Ticket.objects.filter(pk__in=custom_list)
+                queryset_low = Ticket.objects.filter(pk__in=custom_list).reverse()
 
             new_queryset = queryset_high_high.union(queryset_high_low,
                                                     queryset_medium_high,
