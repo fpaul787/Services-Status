@@ -121,7 +121,7 @@
                                 <button class="button-service-filter" type="submit" name="filter_region"
                                         value="{{ region }}">{{ region }}</button>
                             {% endfor %}
-                                <a href="/" class="link">
+                                <a href="{% url 'subscription_view' %}" class="link">
                                     <p class="m-0"><b>Reset Filters</b></p>
                                 </a>
                         </form>
