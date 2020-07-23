@@ -40,7 +40,7 @@
         <!--  End of Search section  -->
 
         <!--  Tickets history section  -->
-        <div class="container" id="status_history">
+        <div class="container border-left border-right border-bottom" id="status_history">
             <div class="row pl-4 py-2 mb-3" id="incidents_heading">
                 <div class="col-2 col-lg-1">
                     <p class="bold">Ticket ID</p>
@@ -91,10 +91,10 @@
 
 {#                        <div class="row border-bottom py-2 mb-4"#}
 {#                             style="border-left: 1.5rem solid {{ ticket.status.color_hex }};">#}
-                        <div class="row border-bottom py-2"
+                        <div class="row border-bottom py-2 service_history_entry"
                              style="border-left: 1.5rem solid {{ ticket.status.color_hex }};">
                             <div class="col-2 col-lg-1">
-                                <a href="/details/{{ ticket.id }}">
+                                <a href="/details/{{ ticket.id }}/{{ object.id }}">
                                     <p class="m-0 link" data-toggle="tooltip" data-placement="top"
                                        title="Sub-services affected: {% for sub_service in ticket.sub_service.all %}{{sub_service}}, {% endfor %}"
                                        id="ticket_id">
