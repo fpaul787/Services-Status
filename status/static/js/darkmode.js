@@ -40,9 +40,11 @@ let cssToggle = () => {
     } else if (currentUrl.includes("/subscription/")) {
         var subscriptions = document.getElementById("subscribe");
         var updateBox = document.getElementById("update");
+        var buttons = documents.getElementById("button-service-filter");
         update.classList.toggle("darkmode");
         update.classList.toggle("whitefont");
         subscriptions.classList.toggle("eventDarkMode");
+        buttons.classlist.toggle("eventDarkMode");
 
     } else if (currentUrl.includes("/details/")){
         var tickets = document.getElementById("ticket_info");
