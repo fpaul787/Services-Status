@@ -328,7 +328,7 @@ h3 {
     color: white;
     border-radius: 4px;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    background: rgb(28, 184, 65);
+    background: #2196F3;
 }
 
 #region_selector {
@@ -461,7 +461,7 @@ h3 {
     }
 
     #subscribe, #update {
-        height: 35rem;
+        height: 36rem;
     }
 
     #region_selector {
