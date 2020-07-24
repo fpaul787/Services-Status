@@ -11,7 +11,7 @@ from django.views.generic import ListView
 
 from .forms import SubscriberDataForm
 from .forms import SubscriberForm
-from .models import SubService, Ticket, Status, Service, TicketLog, Region, Subscriber, EmailDomain
+from .models import SubService, Ticket, Status, Service, TicketLog, Region, Subscriber, EmailDomain, ClientDomain
 
 
 class ServicesStatusView(View):
@@ -582,17 +582,94 @@ class ServiceHistoryView(View):
 
     template_name = "ss_history_visualization.html"
 
-    def get(self, request, service_id=None, *args, **kwargs):
+    def get(self, request, subservice_id=None, service_id=None, domain_id=None,  *args, **kwargs):
 
         context = {
             "active_nav": 1
         }
 
+        context['service_history_view'] = True
+        page_focus = None
+
         searching = False
 
+        if subservice_id is None and service_id is None and domain_id is None:
+            tickets_list = Ticket.objects.all().order_by('-pk')
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+                    if not tickets_list and not searching:
+                        context['no_tickets'] = True
+
+                    if not tickets_list and searching:
+                        context['no_results'] = True
+
+            context['tickets_list'] = tickets_list
+
+        # Focus is on a Domain
+        if domain_id is not None:
+            obj = get_object_or_404(ClientDomain, id=domain_id)
+            context['object'] = obj
+
+            # Signal page is focused on Domain
+            page_focus = "domain"
+
+            tickets_list = Ticket.objects.none()
+
+            for service in obj.services.all():
+                # Getting all tickets affecting this service
+                subservices = SubService.objects.filter(topology__service__name=service.name)
+                # Initializing queryset to empty
+                # for every subservice:
+                for subservice in subservices:
+                    queryset = Ticket.objects.filter(sub_service=subservice).order_by('-pk')
+                    tickets_list = tickets_list.union(queryset)
+
+            tickets_list = tickets_list.order_by('-pk')
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            if not tickets_list and not searching:
+                context['no_tickets'] = True
+
+            if not tickets_list and searching:
+                context['no_results'] = True
+
+
+        # Focus on service
         if service_id is not None:
             obj = get_object_or_404(Service, id=service_id)
             context['object'] = obj
+
+            # Signal page is focused on Service
+            page_focus = "service"
 
             # Getting all tickets affecting this service
             subservices = SubService.objects.filter(topology__service__name=obj.name)
@@ -629,6 +706,56 @@ class ServiceHistoryView(View):
             if not tickets_list and searching:
                 context['no_results'] = True
 
+        # Focus on subservice
+        if subservice_id is not None:
+            obj = get_object_or_404(SubService, id=subservice_id)
+            context['object'] = obj
+
+            # Signal page is focused on Subservice
+            page_focus = "subservice"
+
+            # Initializing queryset to empty
+            tickets_list = Ticket.objects.none()
+
+            queryset = Ticket.objects.filter(sub_service=obj).order_by('-pk')
+            if queryset:
+                tickets_list = tickets_list | queryset
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            if not tickets_list and not searching:
+                context['no_tickets'] = True
+
+            if not tickets_list and searching:
+                context['no_results'] = True
+
+        subservice_list = SubService.objects.all()
+        context['available_subservices'] = subservice_list
+
+        service_list = Service.objects.all()
+        context['available_services'] = service_list
+
+        domain_list = ClientDomain.objects.all()
+        context['available_domains'] = domain_list
+
+        # Assign a page focus
+        context['page_focus'] = page_focus
+
         return render(request, self.template_name, context)
 
 
@@ -639,23 +766,25 @@ class ServiceHistoryDetailsView(ListView):
 
     template_name = "sh_details.html"
 
-    def get(self, request, ticket_id=None, *args, **kwargs):
+    def get(self, request, ticket_id=None, service_id=None, *args, **kwargs):
 
         context = {
             "active_nav": 1
         }
 
         if ticket_id is not None:
+
             # Getting ticket instance
             obj = get_object_or_404(Ticket, id=ticket_id)
             context['object'] = obj
+
 
             # Getting list of events associated with this ticket
             ticket_events = TicketLog.objects.filter(ticket=obj)
             context['ticket_events'] = ticket_events
 
             # Getting list of tickets associated with the service
-            service_tickets = Ticket.objects.filter(sub_service__in=obj.sub_service.all()).order_by('pk')
+            service_tickets = Ticket.objects.all()
             context['service_tickets'] = list(service_tickets)
 
             # Getting number of tickets
@@ -669,15 +798,97 @@ class ServiceHistoryDetailsView(ListView):
             # Getting previous ticket
             prev = index - 1
 
-            if prev >= 0:
+            if prev > 0:
                 ticket = service_tickets[prev]
                 context['prev_ticket'] = ticket
+
 
             # Getting index of previous ticket
             _next = index + 1
 
             if _next <= count - 1:
                 ticket = service_tickets[_next]
+                context['next_ticket'] = ticket
+
+
+
+            # List of clients, with services and associated subservices.
+            # Manually associate subservice with service and domains, based on topography
+            domain_list = ClientDomain.objects.all()
+            associated_domains = []
+            associated_services = []
+            for domain in domain_list:
+                for service in domain.services.all():
+                    subservices = SubService.objects.filter(topology__service__name=service.name).all()
+                    for ticketSub in obj.sub_service.all():
+                        if ticketSub in subservices:
+                            if domain not in associated_domains:
+                                associated_domains.append(domain)
+                            if service not in associated_services:
+                                associated_services.append(service)
+            context['ticket_domain'] = associated_domains
+            context['ticket_services'] = associated_services
+
+        if service_id is not None:
+            obj = get_object_or_404(Service, id=service_id)
+            context['service'] = obj
+
+            # If service_id exists, clear next and previous ticket context
+            context['prev_ticket'] = None
+            context['next_ticket'] = None
+
+            # Following section finds all tickets in same service
+            # Getting all tickets affecting this service
+            subservices = SubService.objects.filter(topology__service__name=obj.name)
+
+            # Initializing queryset to empty
+            tickets_list = Ticket.objects.none()
+
+            # for every subservice:
+            for subservice in subservices:
+                queryset = Ticket.objects.filter(sub_service=subservice).order_by('pk')
+                if queryset:
+                    tickets_list = tickets_list.union(queryset)
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            # Find index of current page in tickets list.
+
+            index = 0
+            count = 0
+            for ticket in tickets_list:
+                if ticket.id == ticket_id:
+                    index = count
+                count = count + 1
+
+            prev = index - 1
+
+            if index > 0:
+                ticket = tickets_list[prev]
+                context['prev_ticket'] = ticket
+
+            # Getting index of previous ticket
+            next = index + 1
+
+            print(tickets_list)
+
+            if next < tickets_list.count():
+                ticket = tickets_list[next]
                 context['next_ticket'] = ticket
 
         return render(request, self.template_name, context)
