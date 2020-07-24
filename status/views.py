@@ -885,8 +885,6 @@ class ServiceHistoryDetailsView(ListView):
             # Getting index of previous ticket
             next = index + 1
 
-            print(tickets_list)
-
             if next < tickets_list.count():
                 ticket = tickets_list[next]
                 context['next_ticket'] = ticket
