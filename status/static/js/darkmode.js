@@ -40,11 +40,16 @@ let cssToggle = () => {
     } else if (currentUrl.includes("/subscription/")) {
         var subscriptions = document.getElementById("subscribe");
         var updateBox = document.getElementById("update");
-        var buttons = documents.getElementById("button-service-filter");
-        update.classList.toggle("darkmode");
-        update.classList.toggle("whitefont");
-        subscriptions.classList.toggle("eventDarkMode");
-        buttons.classlist.toggle("eventDarkMode");
+        var buttons = document.getElementsByClassName("button-service-filter");
+
+        try {
+            update.classList.toggle("darkmode");
+            update.classList.toggle("whitefont");
+        } catch (e) {}
+
+        try {
+            subscriptions.classList.toggle("eventDarkMode");
+        } catch (e) {}
 
     } else if (currentUrl.includes("/details/")){
         var tickets = document.getElementById("ticket_info");
