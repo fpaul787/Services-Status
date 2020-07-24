@@ -196,9 +196,11 @@
             <div class="row mt-2">
                 <div class="col-6" id="ticket_legend"></div>
                 <div class="col-6 d-flex justify-content-end" id="subscribe_to_service">
+                    {% if page_focus == "service" %}
                     <a href="/subscription/{{ object.id }}">
                         <button name="subscribe_to_service" class="btn btn-dark">Subscribe to this service</button>
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

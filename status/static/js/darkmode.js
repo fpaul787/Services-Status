@@ -42,13 +42,16 @@ let cssToggle = () => {
         var subscriptions = document.getElementById("subscribe");
         var updateBox = document.getElementById("update");
         var buttons = document.getElementsByClassName("button-service-filter");
-        update.classList.toggle("darkmode");
-        update.classList.toggle("whitefont");
-        subscriptions.classList.toggle("eventDarkMode");
-        for (let i = 0; i < buttons.length; i++){
-                buttons.classList.toggle("eventDarkMode");
-        }
+        try {
+            update.classList.toggle("darkmode");
+            update.classList.toggle("whitefont");
+            subscriptions.classList.toggle("eventDarkMode");
+            for (let i = 0; i < buttons.length; i++){
+                 buttons[i].classList.toggle("darkmode");
+            }
+        } catch (e) {
 
+        }
     } else if (currentUrl.includes("details")){
         var tickets = document.getElementById("ticket_info");
         tickets.classList.toggle("eventDarkMode");
