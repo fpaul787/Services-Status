@@ -43,6 +43,10 @@
                     <a class="nav-link"
                     href="{% url 'subscription_view' %}">Manage subscriptions</a>
                 </li>
+                <li class="nav-item border-left  {% if service_history_view %} active {% endif %} px-2">
+                    <a class="nav-link"
+                    href="{% url 'service_history_view' %}">History</a>
+                </li>
                 <li class="nav-item border-left px-2">
                     <!--Contact Dropdown-->
                     <button class="nav-link btn dropdown-toggle" type="button" id="dropdownMenu2"
