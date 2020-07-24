@@ -51,6 +51,7 @@ let cssToggle = () => {
         try {
             subscriptions.classList.toggle("eventDarkMode");
         } catch (e) {}
+
     } else if (currentUrl.includes("details")){
         var tickets = document.getElementById("ticket_info");
         tickets.classList.toggle("eventDarkMode");
