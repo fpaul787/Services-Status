@@ -26,8 +26,7 @@ let cssToggle = () => {
     brand.classList.toggle("brighten");
 
     var currentUrl = window.location.pathname;
-    if (currentUrl.length > 1)
-        currentUrl = currentUrl.substring(1,currentUrl.length-1);
+
     if (currentUrl === "/"){
         tableHeader.classList.toggle("tableHeaderDM");
         legendHeader.classList.toggle("tableHeaderDM");
@@ -49,7 +48,7 @@ let cssToggle = () => {
     } else if (currentUrl.includes("details")){
         var tickets = document.getElementById("ticket_info");
         tickets.classList.toggle("eventDarkMode");
-    } else if (!isNaN(currentUrl)){ /* Service Status Page */
+    } else if (currentUrl.includes("history")){ /* Service Status Page */
         var incidents_header = document.getElementById("incidents_heading");
         var incidents_data = document.getElementsByClassName("service_history_entry");
         incidents_header.classList.toggle("tableHeaderDM");

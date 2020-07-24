@@ -582,17 +582,94 @@ class ServiceHistoryView(View):
 
     template_name = "ss_history_visualization.html"
 
-    def get(self, request, service_id=None, *args, **kwargs):
+    def get(self, request, subservice_id=None, service_id=None, domain_id=None,  *args, **kwargs):
 
         context = {
             "active_nav": 1
         }
 
+        context['service_history_view'] = True
+        page_focus = None
+
         searching = False
 
+        if subservice_id is None and service_id is None and domain_id is None:
+            tickets_list = Ticket.objects.all().order_by('-pk')
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+                    if not tickets_list and not searching:
+                        context['no_tickets'] = True
+
+                    if not tickets_list and searching:
+                        context['no_results'] = True
+
+            context['tickets_list'] = tickets_list
+
+        # Focus is on a Domain
+        if domain_id is not None:
+            obj = get_object_or_404(ClientDomain, id=domain_id)
+            context['object'] = obj
+
+            # Signal page is focused on Domain
+            page_focus = "domain"
+
+            tickets_list = Ticket.objects.none()
+
+            for service in obj.services.all():
+                # Getting all tickets affecting this service
+                subservices = SubService.objects.filter(topology__service__name=service.name)
+                # Initializing queryset to empty
+                # for every subservice:
+                for subservice in subservices:
+                    queryset = Ticket.objects.filter(sub_service=subservice).order_by('-pk')
+                    tickets_list = tickets_list.union(queryset)
+
+            tickets_list = tickets_list.order_by('-pk')
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            if not tickets_list and not searching:
+                context['no_tickets'] = True
+
+            if not tickets_list and searching:
+                context['no_results'] = True
+
+
+        # Focus on service
         if service_id is not None:
             obj = get_object_or_404(Service, id=service_id)
             context['object'] = obj
+
+            # Signal page is focused on Service
+            page_focus = "service"
 
             # Getting all tickets affecting this service
             subservices = SubService.objects.filter(topology__service__name=obj.name)
@@ -628,6 +705,56 @@ class ServiceHistoryView(View):
 
             if not tickets_list and searching:
                 context['no_results'] = True
+
+        # Focus on subservice
+        if subservice_id is not None:
+            obj = get_object_or_404(SubService, id=subservice_id)
+            context['object'] = obj
+
+            # Signal page is focused on Subservice
+            page_focus = "subservice"
+
+            # Initializing queryset to empty
+            tickets_list = Ticket.objects.none()
+
+            queryset = Ticket.objects.filter(sub_service=obj).order_by('-pk')
+            if queryset:
+                tickets_list = tickets_list | queryset
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            if not tickets_list and not searching:
+                context['no_tickets'] = True
+
+            if not tickets_list and searching:
+                context['no_results'] = True
+
+        subservice_list = SubService.objects.all()
+        context['available_subservices'] = subservice_list
+
+        service_list = Service.objects.all()
+        context['available_services'] = service_list
+
+        domain_list = ClientDomain.objects.all()
+        context['available_domains'] = domain_list
+
+        # Assign a page focus
+        context['page_focus'] = page_focus
 
         return render(request, self.template_name, context)
 
@@ -671,9 +798,10 @@ class ServiceHistoryDetailsView(ListView):
             # Getting previous ticket
             prev = index - 1
 
-            if prev >= 0:
+            if prev > 0:
                 ticket = service_tickets[prev]
                 context['prev_ticket'] = ticket
+
 
             # Getting index of previous ticket
             _next = index + 1
@@ -681,6 +809,8 @@ class ServiceHistoryDetailsView(ListView):
             if _next <= count - 1:
                 ticket = service_tickets[_next]
                 context['next_ticket'] = ticket
+
+
 
             # List of clients, with services and associated subservices.
             # Manually associate subservice with service and domains, based on topography
@@ -718,7 +848,7 @@ class ServiceHistoryDetailsView(ListView):
             for subservice in subservices:
                 queryset = Ticket.objects.filter(sub_service=subservice).order_by('pk')
                 if queryset:
-                    tickets_list = tickets_list | queryset
+                    tickets_list = tickets_list.union(queryset)
 
             if 'search_tickets' in request.GET:
                 search_value = request.GET['search']
@@ -754,6 +884,8 @@ class ServiceHistoryDetailsView(ListView):
 
             # Getting index of previous ticket
             next = index + 1
+
+            print(tickets_list)
 
             if next < tickets_list.count():
                 ticket = tickets_list[next]

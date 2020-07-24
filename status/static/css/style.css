@@ -18,7 +18,22 @@ html, body {
 .active_option {
     text-decoration: underline;
     font-weight: bold;
+    color: black !important;
 }
+
+.filter_option {
+    color: #056edf;
+}
+
+.filter_option:hover {
+    color: #002aff;
+}
+
+.filter_selector{
+    margin: 1rem 0 0.5rem 0.25rem;
+
+}
+
 
 .navbar {
     font-family: 'Fira Sans', sans-serif;
@@ -480,7 +495,7 @@ h3 {
 
     #incidents_data {
         overflow: auto;
-        height: 30rem;
+        height: 28rem;
     }
 
     #ticket_events_content {

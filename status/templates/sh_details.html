@@ -32,11 +32,14 @@
 
                 <p style="display: inline;">
                     <span class="bold">Services affected:</span>
+                     {% if service %}
+                    <a class="filter_option bold" href="/details/{{ object.id  }}">Clear Filters</a>
+                    {% endif %}
                 </p>
                             <!-- Services affected section -->
                 <ul>
                     {% for ticket_service in ticket_services %}
-                        <li style="float: left;" class="mx-3 {% if service.name == ticket_service.name %} active_option {% endif %}" >
+                        <li style="float: left;" class="mx-3 filter_option {% if service.name == ticket_service.name %} active_option {% endif %}" >
                             <a href="/details/{{ object.id  }}/{{ ticket_service.id }}">
                                 <p style="display: inline;">{{ ticket_service }}</p>
                             </a>
