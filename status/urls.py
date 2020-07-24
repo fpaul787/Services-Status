@@ -17,8 +17,6 @@ urlpatterns = [
 
     path('history/', ServiceHistoryView.as_view(),
          name='service_history_view'),
-    path('history/service_id:<int:service_id>/', ServiceHistoryView.as_view(),
-         name='service_history_view'),
     path('history/subservice_id:<int:subservice_id>/', ServiceHistoryView.as_view(),
          name='service_history_view_subservices'),
     path('history/domain_id:<int:domain_id>/', ServiceHistoryView.as_view(),
