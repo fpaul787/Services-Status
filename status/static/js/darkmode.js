@@ -26,6 +26,7 @@ let cssToggle = () => {
     brand.classList.toggle("brighten");
 
     var currentUrl = window.location.pathname;
+
     if (currentUrl === "/"){
         tableHeader.classList.toggle("tableHeaderDM");
         legendHeader.classList.toggle("tableHeaderDM");
@@ -37,16 +38,32 @@ let cssToggle = () => {
                 events[i].classList.toggle("list_events");
                 events[i].classList.toggle("eventDarkMode");
             }
-    } else if (currentUrl.includes("/subscription/")) {
+    } else if (currentUrl.includes("subscription")) {
         var subscriptions = document.getElementById("subscribe");
         var updateBox = document.getElementById("update");
-        update.classList.toggle("darkmode");
-        update.classList.toggle("whitefont");
-        subscriptions.classList.toggle("eventDarkMode");
+        var buttons = document.getElementsByClassName("button-service-filter");
 
-    } else if (currentUrl.includes("/details/")){
+        try {
+            update.classList.toggle("darkmode");
+            update.classList.toggle("whitefont");
+        } catch (e) {}
+
+        try {
+            subscriptions.classList.toggle("eventDarkMode");
+        } catch (e) {}
+
+    } else if (currentUrl.includes("details")){
         var tickets = document.getElementById("ticket_info");
         tickets.classList.toggle("eventDarkMode");
+    } else if (currentUrl.includes("history")){ /* Service Status Page */
+        var incidents_header = document.getElementById("incidents_heading");
+        var incidents_data = document.getElementsByClassName("service_history_entry");
+        incidents_header.classList.toggle("tableHeaderDM");
+        for (let i = 0; i < incidents_data.length; i++){
+                incidents_data[i].classList.toggle("darkmode");
+                incidents_data[i].classList.toggle("whitefont");
+            }
+
     }
 }
 

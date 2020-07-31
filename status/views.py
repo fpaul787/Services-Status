@@ -11,7 +11,7 @@ from django.views.generic import ListView
 
 from .forms import SubscriberDataForm
 from .forms import SubscriberForm
-from .models import SubService, Ticket, Status, Service, TicketLog, Region, Subscriber, EmailDomain
+from .models import SubService, Ticket, Status, Service, TicketLog, Region, Subscriber, EmailDomain, ClientDomain
 
 
 class ServicesStatusView(View):
@@ -47,73 +47,162 @@ class ServicesStatusView(View):
 
         global services
 
+        today = timezone.now().date()
         self.remove_sessions(request)
 
         # Getting most recent 5 tickets
         # queryset = Ticket.objects.all().order_by('begin').reverse()[:5]
-        queryset = Ticket.objects.all().order_by('pk').reverse()[:5]
+        # queryset = Ticket.objects.all().order_by('pk').reverse()[:5]
+
+        # It will retrieve all the tickets lower than today - 4
+        # (Last 5 days including today) based on the begin day information
+        # queryset_down = Ticket.objects.filter(Q(begin__gte=(today - timedelta(4)))).order_by('pk').order_by('-pk')
+        queryset_down = Ticket.objects.filter(Q(begin__gte=(today - timedelta(4))))
+
+        # It will retrieve all the tickets grader than today
+        # based on the end day information
+        # queryset_up = Ticket.objects.filter(Q(end__gte=today)).order_by('pk').order_by('-pk')
+        queryset_up = Ticket.objects.filter(Q(end__gte=today))
+
+        # It will join query results precomputed before
+        queryset = queryset_down.union(queryset_up)
 
         # Initializing queryset to empty
         recent_tickets = Ticket.objects.none()
 
-        new_queryset = None
+        # new_queryset = None
+        ticket_list = list()
 
         if queryset:
             recent_tickets_list = recent_tickets | queryset
 
-            recent_high_high_priority_tickets = list()
-            recent_high_low_priority_tickets = list()
-            recent_medium_high_priority_tickets = list()
-            recent_medium_low_priority_tickets = list()
-            recent_low_priority_ticket = list()
+            # recent_high_high_priority_tickets = list()
+            # recent_high_low_priority_tickets = list()
+            # recent_medium_high_priority_tickets = list()
+            # recent_medium_low_priority_tickets = list()
+            # recent_low_priority_ticket = list()
 
+            ticket_priorities = dict()
             for ticket in recent_tickets_list:
-
                 status = ticket.status.tag
-                if status == "Outage":
-                    recent_high_high_priority_tickets.append(ticket)
-                elif status == "Alert":
-                    recent_high_low_priority_tickets.append(ticket)
-                elif status == "In Process":
-                    recent_medium_high_priority_tickets.append(ticket)
-                elif status == "Planned":
-                    recent_medium_low_priority_tickets.append(ticket)
-                else:
-                    recent_low_priority_ticket.append(ticket)
 
-            queryset_high_high = Ticket.objects.none()
-            if len(recent_high_high_priority_tickets):
-                custom_list = [ticket.id for ticket in recent_high_high_priority_tickets]
-                queryset_high_high = Ticket.objects.filter(pk__in=custom_list)
+                if status not in ticket_priorities.keys():
+                    ticket_priorities[status] = list()
+                ticket_priorities[status].append(ticket)
 
-            queryset_high_low = Ticket.objects.none()
-            if len(recent_high_low_priority_tickets):
-                custom_list = [ticket.id for ticket in recent_high_low_priority_tickets]
-                queryset_high_low = Ticket.objects.filter(pk__in=custom_list)
+                # if status == "Outage":
+                #     if status not in ticket_priorities.keys():
+                #         ticket_priorities[status] = list()
+                #     ticket_priorities[status].append(ticket)
+                #     # recent_high_high_priority_tickets.append(ticket)
+                #
+                # elif status == "Alert":
+                #     if status not in ticket_priorities.keys():
+                #         ticket_priorities[status] = list()
+                #     ticket_priorities[status].append(ticket)
+                #     # recent_high_low_priority_tickets.append(ticket)
+                #
+                # elif status == "In Process":
+                #     if status not in ticket_priorities.keys():
+                #         ticket_priorities[status] = list()
+                #     ticket_priorities[status].append(ticket)
+                #     # recent_medium_high_priority_tickets.append(ticket)
+                #
+                # elif status == "Planned":
+                #     if status not in ticket_priorities.keys():
+                #         ticket_priorities[status] = list()
+                #     ticket_priorities[status].append(ticket)
+                #     # recent_medium_low_priority_tickets.append(ticket)
+                #
+                # else:
+                #     if status not in ticket_priorities.keys():
+                #         ticket_priorities[status] = list()
+                #     ticket_priorities[status].append(ticket)
+                #     # recent_low_priority_ticket.append(ticket)
 
-            queryset_medium_high = Ticket.objects.none()
-            if len(recent_medium_high_priority_tickets):
-                custom_list = [ticket.id for ticket in recent_medium_high_priority_tickets]
-                queryset_medium_high = Ticket.objects.filter(pk__in=custom_list)
+            # queryset_high_high = Ticket.objects.none()
+            # if len(recent_high_high_priority_tickets):
+            #     custom_list = [ticket.id for ticket in recent_high_high_priority_tickets]
+            # queryset_high_high = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
+            #     for in_ticket in queryset_high_high:
+            #         ticket_list.append(in_ticket)
 
-            queryset_medium_low = Ticket.objects.none()
-            if len(recent_medium_low_priority_tickets):
-                custom_list = [ticket.id for ticket in recent_medium_low_priority_tickets]
-                queryset_medium_low = Ticket.objects.filter(pk__in=custom_list)
+            ticket_status = Status.objects.all().order_by('visual_order')
+            for t_status in ticket_status:
+                if t_status.tag in ticket_priorities.keys() and len(ticket_priorities[t_status.tag]):
+                    custom_list = [ticket.id for ticket in ticket_priorities[t_status.tag]]
+                    queryset = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
 
-            queryset_low = Ticket.objects.none()
-            if len(recent_low_priority_ticket):
-                custom_list = [ticket.id for ticket in recent_low_priority_ticket]
-                queryset_low = Ticket.objects.filter(pk__in=custom_list)
+                    for in_ticket in queryset:
+                        ticket_list.append(in_ticket)
 
-            new_queryset = queryset_high_high.union(queryset_high_low,
-                                                    queryset_medium_high,
-                                                    queryset_medium_low,
-                                                    queryset_low)
+            # if "Outage" in ticket_priorities.keys() and len(ticket_priorities['Outage']):
+            #     custom_list = [ticket.id for ticket in ticket_priorities['Outage']]
+            #     queryset = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
+            #
+            #     for in_ticket in queryset:
+            #         ticket_list.append(in_ticket)
 
-            for ticket in new_queryset:
-                if ticket.is_in_process and ticket.status.tag == "Planned":
-                    ticket.status.tag = "In Process"
+            # queryset_high_low = Ticket.objects.none()
+            # if len(recent_high_low_priority_tickets):
+            #     custom_list = [ticket.id for ticket in recent_high_low_priority_tickets]
+            #     for in_ticket in queryset_high_low:
+            #         ticket_list.append(in_ticket)
+
+            # if "Alert" in ticket_priorities.keys() and len(ticket_priorities['Alert']):
+            #     custom_list = [ticket.id for ticket in ticket_priorities['Alert']]
+            #     queryset = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
+            #
+            #     for in_ticket in queryset:
+            #         ticket_list.append(in_ticket)
+
+            # queryset_medium_high = Ticket.objects.none()
+            # if len(recent_medium_high_priority_tickets):
+            #     custom_list = [ticket.id for ticket in recent_medium_high_priority_tickets]
+            #     for in_ticket in queryset_medium_high:
+            #         ticket_list.append(in_ticket)
+
+            # if "In Process" in ticket_priorities.keys() and len(ticket_priorities['In Process']):
+            #     custom_list = [ticket.id for ticket in ticket_priorities['In Process']]
+            #     queryset = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
+            #
+            #     for in_ticket in queryset:
+            #         ticket_list.append(in_ticket)
+
+            # queryset_medium_low = Ticket.objects.none()
+            # if len(recent_medium_low_priority_tickets):
+            #     custom_list = [ticket.id for ticket in recent_medium_low_priority_tickets]
+            #     for in_ticket in queryset_medium_low:
+            #         ticket_list.append(in_ticket)
+
+            # if "Planned" in ticket_priorities.keys() and len(ticket_priorities['Planned']):
+            #     custom_list = [ticket.id for ticket in ticket_priorities['Planned']]
+            #     queryset = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
+            #
+            #     for in_ticket in queryset:
+            #         ticket_list.append(in_ticket)
+
+            # queryset_low = Ticket.objects.none()
+            # if len(recent_low_priority_ticket):
+            #     custom_list = [ticket.id for ticket in recent_low_priority_ticket]
+            #     for in_ticket in queryset_low:
+            #         ticket_list.append(in_ticket)
+
+            # if "No Issues" in ticket_priorities.keys() and len(ticket_priorities['No Issues']):
+            #     custom_list = [ticket.id for ticket in ticket_priorities['No Issues']]
+            #     queryset = Ticket.objects.filter(pk__in=custom_list).order_by('-pk')
+            #
+            #     for in_ticket in queryset:
+            #         ticket_list.append(in_ticket)
+
+            # new_queryset = queryset_high_high.union(queryset_high_low,
+            #                                         queryset_medium_high,
+            #                                         queryset_medium_low,
+            #                                         queryset_low)
+
+            for ticket in ticket_list:
+                # if ticket.is_in_process and ticket.status.tag == "Planned":
+                #     ticket.status.tag = "In Process"
                 last_log = TicketLog.objects.filter(ticket=ticket.id)\
                     .filter(action_date__range=["2012-01-01",timezone.now()]).order_by('action_date').last()
                 if last_log is not None:
@@ -122,7 +211,7 @@ class ServicesStatusView(View):
                     ticket.latest_log = ticket.status
 
         context = {
-            "ticket_list": new_queryset,
+            "ticket_list": ticket_list,
             "service_active": True
         }
 
@@ -209,6 +298,7 @@ class ServicesStatusView(View):
             i = 0
             for day in list_of_five_days:
                 open_tickets = tickets_list.filter(Q(begin__lte=(day + timedelta(days=1))) & Q(end__isnull=True))
+
                 current_tickets = tickets_list.filter(begin__startswith=day)
 
                 active_tickets_per_day = open_tickets.union(current_tickets).order_by('begin')
@@ -569,17 +659,94 @@ class ServiceHistoryView(View):
 
     template_name = "ss_history_visualization.html"
 
-    def get(self, request, service_id=None, *args, **kwargs):
+    def get(self, request, subservice_id=None, service_id=None, domain_id=None,  *args, **kwargs):
 
         context = {
             "active_nav": 1
         }
 
+        context['service_history_view'] = True
+        page_focus = None
+
         searching = False
 
+        if subservice_id is None and service_id is None and domain_id is None:
+            tickets_list = Ticket.objects.all().order_by('-pk')
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+                    if not tickets_list and not searching:
+                        context['no_tickets'] = True
+
+                    if not tickets_list and searching:
+                        context['no_results'] = True
+
+            context['tickets_list'] = tickets_list
+
+        # Focus is on a Domain
+        if domain_id is not None:
+            obj = get_object_or_404(ClientDomain, id=domain_id)
+            context['object'] = obj
+
+            # Signal page is focused on Domain
+            page_focus = "domain"
+
+            tickets_list = Ticket.objects.none()
+
+            for service in obj.services.all():
+                # Getting all tickets affecting this service
+                subservices = SubService.objects.filter(topology__service__name=service.name)
+                # Initializing queryset to empty
+                # for every subservice:
+                for subservice in subservices:
+                    queryset = Ticket.objects.filter(sub_service=subservice).order_by('-pk')
+                    tickets_list = tickets_list.union(queryset)
+
+            tickets_list = tickets_list.order_by('-pk')
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            if not tickets_list and not searching:
+                context['no_tickets'] = True
+
+            if not tickets_list and searching:
+                context['no_results'] = True
+
+
+        # Focus on service
         if service_id is not None:
             obj = get_object_or_404(Service, id=service_id)
             context['object'] = obj
+
+            # Signal page is focused on Service
+            page_focus = "service"
 
             # Getting all tickets affecting this service
             subservices = SubService.objects.filter(topology__service__name=obj.name)
@@ -616,6 +783,56 @@ class ServiceHistoryView(View):
             if not tickets_list and searching:
                 context['no_results'] = True
 
+        # Focus on subservice
+        if subservice_id is not None:
+            obj = get_object_or_404(SubService, id=subservice_id)
+            context['object'] = obj
+
+            # Signal page is focused on Subservice
+            page_focus = "subservice"
+
+            # Initializing queryset to empty
+            tickets_list = Ticket.objects.none()
+
+            queryset = Ticket.objects.filter(sub_service=obj).order_by('-pk')
+            if queryset:
+                tickets_list = tickets_list | queryset
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            if not tickets_list and not searching:
+                context['no_tickets'] = True
+
+            if not tickets_list and searching:
+                context['no_results'] = True
+
+        subservice_list = SubService.objects.all()
+        context['available_subservices'] = subservice_list
+
+        service_list = Service.objects.all()
+        context['available_services'] = service_list
+
+        domain_list = ClientDomain.objects.all()
+        context['available_domains'] = domain_list
+
+        # Assign a page focus
+        context['page_focus'] = page_focus
+
         return render(request, self.template_name, context)
 
 
@@ -626,23 +843,25 @@ class ServiceHistoryDetailsView(ListView):
 
     template_name = "sh_details.html"
 
-    def get(self, request, ticket_id=None, *args, **kwargs):
+    def get(self, request, ticket_id=None, service_id=None, *args, **kwargs):
 
         context = {
             "active_nav": 1
         }
 
         if ticket_id is not None:
+
             # Getting ticket instance
             obj = get_object_or_404(Ticket, id=ticket_id)
             context['object'] = obj
+
 
             # Getting list of events associated with this ticket
             ticket_events = TicketLog.objects.filter(ticket=obj)
             context['ticket_events'] = ticket_events
 
             # Getting list of tickets associated with the service
-            service_tickets = Ticket.objects.filter(sub_service__in=obj.sub_service.all()).order_by('pk')
+            service_tickets = Ticket.objects.all()
             context['service_tickets'] = list(service_tickets)
 
             # Getting number of tickets
@@ -656,15 +875,95 @@ class ServiceHistoryDetailsView(ListView):
             # Getting previous ticket
             prev = index - 1
 
-            if prev >= 0:
+            if prev > 0:
                 ticket = service_tickets[prev]
                 context['prev_ticket'] = ticket
+
 
             # Getting index of previous ticket
             _next = index + 1
 
             if _next <= count - 1:
                 ticket = service_tickets[_next]
+                context['next_ticket'] = ticket
+
+
+
+            # List of clients, with services and associated subservices.
+            # Manually associate subservice with service and domains, based on topography
+            domain_list = ClientDomain.objects.all()
+            associated_domains = []
+            associated_services = []
+            for domain in domain_list:
+                for service in domain.services.all():
+                    subservices = SubService.objects.filter(topology__service__name=service.name).all()
+                    for ticketSub in obj.sub_service.all():
+                        if ticketSub in subservices:
+                            if domain not in associated_domains:
+                                associated_domains.append(domain)
+                            if service not in associated_services:
+                                associated_services.append(service)
+            context['ticket_domain'] = associated_domains
+            context['ticket_services'] = associated_services
+
+        if service_id is not None:
+            obj = get_object_or_404(Service, id=service_id)
+            context['service'] = obj
+
+            # If service_id exists, clear next and previous ticket context
+            context['prev_ticket'] = None
+            context['next_ticket'] = None
+
+            # Following section finds all tickets in same service
+            # Getting all tickets affecting this service
+            subservices = SubService.objects.filter(topology__service__name=obj.name)
+
+            # Initializing queryset to empty
+            tickets_list = Ticket.objects.none()
+
+            # for every subservice:
+            for subservice in subservices:
+                queryset = Ticket.objects.filter(sub_service=subservice).order_by('pk')
+                if queryset:
+                    tickets_list = tickets_list.union(queryset)
+
+            if 'search_tickets' in request.GET:
+                search_value = request.GET['search']
+                aux_list = list()
+
+                if search_value is not '':
+                    for ticket in tickets_list:
+                        if (search_value.lower() in (ticket.ticket_id.lower(),
+                                                     ticket.action_description.lower(),
+                                                     ticket.status.tag.lower())):
+                            aux_list.append(ticket)
+
+                    tickets_list = aux_list
+                    searching = True
+                    context['search_value'] = search_value
+
+            context['tickets_list'] = tickets_list
+
+            # Find index of current page in tickets list.
+
+            index = 0
+            count = 0
+            for ticket in tickets_list:
+                if ticket.id == ticket_id:
+                    index = count
+                count = count + 1
+
+            prev = index - 1
+
+            if index > 0:
+                ticket = tickets_list[prev]
+                context['prev_ticket'] = ticket
+
+            # Getting index of previous ticket
+            next = index + 1
+
+            if next < tickets_list.count():
+                ticket = tickets_list[next]
                 context['next_ticket'] = ticket
 
         return render(request, self.template_name, context)

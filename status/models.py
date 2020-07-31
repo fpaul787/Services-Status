@@ -235,6 +235,7 @@ class Status(models.Model):
     color_name = models.CharField(unique=True, max_length=7)
     color_hex = ColorField(default='#000000')
     class_design = models.CharField(unique=True, max_length=50)
+    visual_order = models.IntegerField(blank=True, default=1)
 
     class Meta:
         verbose_name = _("Status Category")
