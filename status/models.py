@@ -223,6 +223,7 @@ class Topology(models.Model):
                "priority".format(self.pk, self.service, self.priority)
 
 
+
 class Status(models.Model):
     """
     Class to specify the Status Model/Table
